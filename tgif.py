@@ -4,6 +4,7 @@ import datetime
 import schedule
 import time
 import boto3
+from holidays import official_tgif, get_holidays
 
 
 
@@ -40,8 +41,10 @@ def replace(src_filename, dst_filename, src_string, dst_string):
 
 
 def job(*_): # argument unused for now
-    days = datetime.timedelta( (target - datetime.date.today().weekday()) % 7).days
+    holidays = get_holidays()
+    days, exponent = official_tgif(holidays)
     replace("tgif.html.template", "tgif.html", "#DAYS#", str(days))
+    replace("tgif.html.template", "tgif.html", "#EXPONENT#", str(exponent))
     s3_client.upload("tgif.html")
 
 schedule.every().day.at("07:00").do(job, None)
