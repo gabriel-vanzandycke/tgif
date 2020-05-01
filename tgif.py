@@ -22,10 +22,10 @@ class AWSS3Client(object):
         self.resource = s.resource(service_name='s3')
         self.bucket = self.resource.Bucket(s3_bucket)
 
-    def upload(self, file_name, prefix):
-        self.bucket.upload_file(file_name, os.path.join(prefix, file_name), ExtraArgs={'ACL': 'public-read', 'CacheControl': "private,max-age=0,no-cache,must-revalidate", 'ContentType': 'text/html'})
+    def upload(self, file_name):
+        self.bucket.upload_file(file_name, file_name, ExtraArgs={'ACL': 'public-read', 'CacheControl': "private,max-age=0,no-cache,must-revalidate", 'ContentType': 'text/html'})
 
-s3_client = AWSS3Client("km-arena-data-euw1", "production")
+s3_client = AWSS3Client("auie", "gva@DEV")
 
 def replace(src_filename, dst_filename, src_string, dst_string):
     # Read in the file
@@ -40,15 +40,15 @@ def replace(src_filename, dst_filename, src_string, dst_string):
         file.write(filedata)
 
 
-def job(_): # argument unused for now
+def job(*_): # argument unused for now
     holidays = get_holidays()
     days, exponent = official_tgif(holidays)
     replace("tgif.html.template", "tgif.html", "#DAYS#", str(days))
     replace("tgif.html.template", "tgif.html", "#EXPONENT#", str(exponent))
-    s3_client.upload("tgif.html", "tmp/gva")
+    s3_client.upload("tgif.html")
 
 schedule.every().day.at("07:00").do(job, None)
-
+job()
 while True:
     schedule.run_pending()
     time.sleep(60*60) # check schedule every hour
