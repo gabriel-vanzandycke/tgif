@@ -34,7 +34,7 @@ exponent_table = {
     3: "³"
 }
 
-def job(*_): # argument unused for now
+def job(skip_slack=False): # argument unused for now
     holidays = get_holidays()
     days, exponent = official_tgif(holidays)
     shutil.copyfile("tgif.html.template", "tgif.html")
@@ -42,15 +42,16 @@ def job(*_): # argument unused for now
     replace("tgif.html", "#EXPONENT#", str(exponent))
     s3_client.upload("tgif.html")
 
-    exponent_str = exponent_table.get(exponent, "^{}".format(exponent))
-    slack_client.chat_postMessage(
-        channel="general",
-        text="TGIF{}-{}".format(exponent_str, days)
-    )
+    if not skip_slack:
+        exponent_str = exponent_table.get(exponent, "^{}".format(exponent))
+        slack_client.chat_postMessage(
+            channel="general",
+            text="TGIF{}-{}".format(exponent_str, days)
+        )
 
 schedule.every().day.at("07:00").do(job, None)
 
-#job()
+job(skip_slack=True)
 while True:
     schedule.run_pending()
     time.sleep(60*60) # check schedule every hour
