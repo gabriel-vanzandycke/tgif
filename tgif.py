@@ -27,6 +27,13 @@ def replace(filename, src_string, dst_string):
         file.write(filedata)
 
 
+exponent_table = {
+    0: "⁰",
+    1: "¹",
+    2: "²",
+    3: "³"
+}
+
 def job(*_): # argument unused for now
     holidays = get_holidays()
     days, exponent = official_tgif(holidays)
@@ -35,14 +42,15 @@ def job(*_): # argument unused for now
     replace("tgif.html", "#EXPONENT#", str(exponent))
     s3_client.upload("tgif.html")
 
+    exponent_str = exponent_table.get(exponent, "^{}".format(exponent))
     slack_client.chat_postMessage(
-        channel="tgif",
-        text="TGIF^{}-{}".format(exponent, days)
+        channel="general",
+        text="TGIF{}-{}".format(exponent_str, days)
     )
 
 schedule.every().day.at("07:00").do(job, None)
 
-job()
+#job()
 while True:
     schedule.run_pending()
     time.sleep(60*60) # check schedule every hour
