@@ -23,8 +23,9 @@ def get_holidays():
         
         for holiday in holidays:
             try:
-                date = dateparser.parse(holiday.split(":")[0].split(" ", 1)[1].strip() + year.text.split("-")[0])
+                date = dateparser.parse(holiday.split(":")[0].split(None, 1)[1].strip() + " " + year.text.split("-")[0])
                 if date.month < 9:
+                    old_date = date
                     date = date.replace(year=date.year + 1)
             
                 all_holidays.append(date.date())
@@ -55,6 +56,7 @@ def official_tgif(holidays):
     
     if merged_holidays[0] == 0:
         exponent -= 1
+        count = "NO WORK"
     return count, exponent
 
 
