@@ -22,15 +22,16 @@ def get_holidays():
                 holidays.append("".join(holiday_list))
         
         for holiday in holidays:
-            try:
-                date = dateparser.parse(holiday.split(":")[0].split(None, 1)[1].strip() + " " + year.text.split("-")[0])
-                if date.month < 9:
-                    old_date = date
-                    date = date.replace(year=date.year + 1)
-            
-                all_holidays.append(date.date())
-            except:
-                print("[WARNING] an error occured, but html is hard")
+            if holiday:
+                try:
+                    date = dateparser.parse(holiday.split(":")[0].split(None, 1)[1].strip() + " " + year.text.split("-")[0])
+                    if date.month < 9:
+                        old_date = date
+                        date = date.replace(year=date.year + 1)
+
+                    all_holidays.append(date.date())
+                except:
+                    print("[WARNING] an error occured when parsing '{}'... but html is hard".format(holiday.split(":")[0].split(None, 1)[1].strip()))
     
     return all_holidays
 
