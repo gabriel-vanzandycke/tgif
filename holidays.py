@@ -57,7 +57,7 @@ def official_tgif(holidays):
     
     if merged_holidays[0] == 0:
         exponent -= 1
-        count = "NO WORK"
+        # count = "NO WORK" # fonctionnalité peu appréciée par les membres du comité TGIF. Je la mets en suspens en attendant un référendum
     return count, exponent
 
 
