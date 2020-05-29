@@ -44,7 +44,7 @@ def official_tgif(holidays):
     today = datetime.date.today()
     weekend_now = [(x-today.weekday()) for x in weekend]
     holidays_now = [(x-today).days for x in holidays]
-    merged_holidays = sorted(holidays_now+weekend_now)
+    merged_holidays = sorted(set(holidays_now+weekend_now))
     merged_holidays = list(filter(lambda x: x >= 0, merged_holidays))
 
     count = max(0, merged_holidays[0]-1)
